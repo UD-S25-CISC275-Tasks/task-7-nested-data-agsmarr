@@ -135,21 +135,12 @@ export function toCSV(questions: Question[]): string {
  */
 export function makeAnswers(questions: Question[]): Answer[] {
     //WORKING
-    let answers: Answer[] = questions.map((question: Question) =>
-        true ?
-            {
-                questionId: question.id,
-                text: "",
-                submitted: false,
-                correct: false,
-            }
-        :   {
-                questionId: question.id,
-                text: "",
-                submitted: false,
-                correct: false,
-            },
-    );
+    let answers: Answer[] = questions.map((question: Question) => ({
+        questionId: question.id,
+        text: "",
+        submitted: false,
+        correct: false,
+    }));
     return answers;
 }
 
@@ -302,8 +293,8 @@ export function duplicateQuestionInArray(
         (question: Question) => question.id == targetId,
     );
     let newQuestion = duplicateQuestion(newId, { ...questions[index] });
-    let newQuestions: Question[] = questions.map((question: Question) =>
-        true ? question : question,
+    let newQuestions: Question[] = questions.map(
+        (question: Question) => question,
     );
     newQuestions.splice(index + 1, 0, newQuestion);
     return newQuestions;
