@@ -170,7 +170,7 @@ export function sameType(questions: Question[]): boolean {
             (question: Question): boolean =>
                 question.type == "multiple_choice_question",
         );
-    } else if (questions[0].type == "short_answer_question") {
+    } else {
         return questions.every(
             (question: Question): boolean =>
                 question.type == "short_answer_question",
