@@ -1,5 +1,6 @@
 import { Answer } from "./interfaces/answer";
 import { Question, QuestionType } from "./interfaces/question";
+import { duplicateQuestion, makeBlankQuestion } from "./objects";
 
 /**
  * Consumes an array of questions and returns a new array with only the questions
@@ -73,14 +74,29 @@ export function getNames(questions: Question[]): string[] {
  * Consumes an array of questions and returns the sum total of all their points added together.
  */
 export function sumPoints(questions: Question[]): number {
-    return 0;
+    //WORKING
+    let points: number[] = questions.map(
+        (question: Question) => question.points,
+    );
+    return points.reduce((points: number, total: number) => points + total, 0);
 }
 
 /***
  * Consumes an array of questions and returns the sum total of the PUBLISHED questions.
  */
 export function sumPublishedPoints(questions: Question[]): number {
-    return 0;
+    //WORKING
+    let filtered: Question[] = questions.filter(
+        (question: Question) => question.published,
+    );
+    let points: number[] = filtered.map(
+        (question: Question) => question.points,
+    );
+    let sum: number = points.reduce(
+        (points: number, total: number) => points + total,
+        0,
+    );
+    return sum;
 }
 
 /***
@@ -101,7 +117,15 @@ id,name,options,points,published
  * Check the unit tests for more examples!
  */
 export function toCSV(questions: Question[]): string {
-    return "";
+    let CSV =
+        "id,name,options,points,published\n" +
+        questions
+            .map(
+                (question: Question): string =>
+                    `${question.id},${question.name},${question.options.length},${question.points},${question.published}`,
+            )
+            .join("\n");
+    return CSV;
 }
 
 /**
@@ -110,7 +134,23 @@ export function toCSV(questions: Question[]): string {
  * making the `text` an empty string, and using false for both `submitted` and `correct`.
  */
 export function makeAnswers(questions: Question[]): Answer[] {
-    return [];
+    //WORKING
+    let answers: Answer[] = questions.map((question: Question) =>
+        true ?
+            {
+                questionId: question.id,
+                text: "",
+                submitted: false,
+                correct: false,
+            }
+        :   {
+                questionId: question.id,
+                text: "",
+                submitted: false,
+                correct: false,
+            },
+    );
+    return answers;
 }
 
 /***
@@ -118,7 +158,13 @@ export function makeAnswers(questions: Question[]): Answer[] {
  * each question is now published, regardless of its previous published status.
  */
 export function publishAll(questions: Question[]): Question[] {
-    return [];
+    //WORKING
+    let published = questions.map((question: Question) =>
+        question.published == false ?
+            { ...question, published: true }
+        :   question,
+    );
+    return published;
 }
 
 /***
@@ -126,6 +172,21 @@ export function publishAll(questions: Question[]): Question[] {
  * are the same type. They can be any type, as long as they are all the SAME type.
  */
 export function sameType(questions: Question[]): boolean {
+    //WORKING
+    if (questions.length == 0) {
+        return true;
+    }
+    if (questions[0].type == "multiple_choice_question") {
+        return questions.every(
+            (question: Question): boolean =>
+                question.type == "multiple_choice_question",
+        );
+    } else if (questions[0].type == "short_answer_question") {
+        return questions.every(
+            (question: Question): boolean =>
+                question.type == "short_answer_question",
+        );
+    }
     return false;
 }
 
@@ -140,7 +201,8 @@ export function addNewQuestion(
     name: string,
     type: QuestionType,
 ): Question[] {
-    return [];
+    //WORKING
+    return [...questions, makeBlankQuestion(id, name, type)];
 }
 
 /***
@@ -153,7 +215,11 @@ export function renameQuestionById(
     targetId: number,
     newName: string,
 ): Question[] {
-    return [];
+    //WORKING
+    let newQuestions: Question[] = questions.map((question: Question) =>
+        question.id == targetId ? { ...question, name: newName } : question,
+    );
+    return newQuestions;
 }
 
 /***
@@ -168,7 +234,22 @@ export function changeQuestionTypeById(
     targetId: number,
     newQuestionType: QuestionType,
 ): Question[] {
-    return [];
+    //WORKING
+    if (newQuestionType !== "multiple_choice_question") {
+        let newQuestions: Question[] = questions.map((question: Question) =>
+            question.id == targetId ?
+                { ...question, type: newQuestionType, options: [] }
+            :   question,
+        );
+        return newQuestions;
+    }
+    let newQuestions: Question[] = questions.map((question: Question) =>
+        question.id == targetId ?
+            { ...question, type: newQuestionType }
+        :   question,
+    );
+
+    return newQuestions;
 }
 
 /**
@@ -187,7 +268,22 @@ export function editOption(
     targetOptionIndex: number,
     newOption: string,
 ): Question[] {
-    return [];
+    //WORKING
+    let newQuestions = questions.map((question: Question) =>
+        question.id == targetId ?
+            {
+                ...question,
+                options:
+                    targetOptionIndex == -1 ?
+                        [...question.options, newOption]
+                    :   question.options.map((option: string, index: number) =>
+                            index == targetOptionIndex ? newOption : option,
+                        ),
+            }
+        :   question,
+    );
+
+    return newQuestions;
 }
 
 /***
@@ -201,5 +297,14 @@ export function duplicateQuestionInArray(
     targetId: number,
     newId: number,
 ): Question[] {
-    return [];
+    //WORKING
+    let index = questions.findIndex(
+        (question: Question) => question.id == targetId,
+    );
+    let newQuestion = duplicateQuestion(newId, { ...questions[index] });
+    let newQuestions: Question[] = questions.map((question: Question) =>
+        true ? question : question,
+    );
+    newQuestions.splice(index + 1, 0, newQuestion);
+    return newQuestions;
 }
