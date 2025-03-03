@@ -176,7 +176,6 @@ export function sameType(questions: Question[]): boolean {
                 question.type == "short_answer_question",
         );
     }
-    return false;
 }
 
 /***
