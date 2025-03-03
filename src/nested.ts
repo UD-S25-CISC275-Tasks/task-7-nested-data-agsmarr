@@ -151,9 +151,7 @@ export function makeAnswers(questions: Question[]): Answer[] {
 export function publishAll(questions: Question[]): Question[] {
     //WORKING
     let published = questions.map((question: Question) =>
-        question.published == false ?
-            { ...question, published: true }
-        :   question,
+        !question.published ? { ...question, published: true } : question,
     );
     return published;
 }
